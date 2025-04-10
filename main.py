@@ -22,7 +22,7 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
 X_train = X_train.astype(int)
 Y_train = Y_train.astype(int)
 
-clf = DecisionTreeClassifier(criterion="entropy",  min_impurity_decrease=0.01)
+clf = DecisionTreeClassifier(criterion="entropy",  min_impurity_decrease=0.05)
 clf.fit(X_train, Y_train)
 
 X_test = X_test.astype(int)
