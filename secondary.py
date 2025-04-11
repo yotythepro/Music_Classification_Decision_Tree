@@ -12,7 +12,8 @@ import numpy as np
 from numpy.ma.core import shape
 from sklearn.cluster import KMeans
 
-standardized = False
+standardized = True
+scale_nums = False
 
 dataset_file_name = "song_Data.class.csv" if standardized else "song_Data_Non_Standard.csv"
 #image_name = "corr_standard.png" if standardized else "corr_non_standard.png"
@@ -38,35 +39,52 @@ plt.plot(range(30), range(30))
 
 plt.show()"""
 
-features = data.iloc[1:, [5, 8, 10, 11, 14]].values.astype(int)
+for lang in range(2):
+    features = data.iloc[1:, [5, 8, 10, 11, 14]].values.astype(int)
+    features = np.array(list(filter(lambda x: x[-1] == lang, features)))
 
-features = list(zip(*features))
-for i in range(len(features)):
-    features[i] /= max(features[i])
+    features =  np.array(list(zip(*list(zip(*features))[:-2])))
 
-features = np.array(list(zip(*features)))
+    cluster_count = 2 if lang == 1 else 3
 
-kmeans = KMeans(n_clusters=3)
-kmeans.fit(features)
+    if (not standardized) or scale_nums:
+        features = list(zip(*features))
+        for i in range(len(features)):
+            features[i] /= max(features[i])
 
-values = np.zeros((3, 5))
-count = np.zeros((3, 1))
+        features = np.array(list(zip(*features)))
+
+    kmeans = KMeans(n_clusters=cluster_count)
+    kmeans.fit(features)
+
+    values = np.zeros((cluster_count, 3))
+    count = np.zeros((cluster_count, 1))
 
 
-for i in zip(features, kmeans.labels_):
-    values[i[1]] += i[0]
-    count[i[1]] += 1
+    for i in zip(features, kmeans.labels_):
+        values[i[1]] += i[0]
+        count[i[1]] += 1
 
-cluster_averages = values / count
+    cluster_averages = values / count
 
-"""cluster_averages = np.array([[0.56185567, 1.01546392, 1., 1., 0.],
- [2.48812665, 1.25593668, 1.20580475, 1.35883905, 0.32717678],
- [0.43877551, 1.00510204, 1., 1.01530612, 1.]])"""
 
-column_names = data.iloc[0, [5, 8, 10, 11, 14]]
 
-print(cluster_averages)
+    #print(cluster_averages)
 
-for i in range(3):
-    plt.plot(range(5), cluster_averages[i])
+    #plt.figure(lang + 1)
+
+    lang_name = "English" if lang == 1 else "Hebrew"
+    line_type = "dashed" if lang == 1 else "solid"
+
+    for i in range(cluster_count):
+        plt.plot(range(3), cluster_averages[i],
+                 marker='o', label=f"{lang_name} {count[i]}", linestyle=line_type)
+
+column_names = data.iloc[0, [5, 8, 10]]
+
+plt.xticks(range(3), column_names)
+plt.legend()
+plt.title(f"Song Popularity Clusters")
+
 plt.show()
+
