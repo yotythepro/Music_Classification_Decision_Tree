@@ -12,7 +12,7 @@ import numpy as np
 from numpy.ma.core import shape
 from sklearn.cluster import KMeans
 
-standardized = True
+standardized = False
 scale_nums = False
 
 dataset_file_name = "song_Data.class.csv" if standardized else "song_Data_Non_Standard.csv"
@@ -38,7 +38,7 @@ plt.scatter(data.iloc[1:, 13].values.astype(int), data.iloc[1:, 8].values.astype
 plt.plot(range(30), range(30))
 
 plt.show()
-"""
+
 
 for lang in range(2):
     features = data.iloc[1:, [5, 8, 10, 11, 14]].values.astype(int)
@@ -89,4 +89,21 @@ plt.legend()
 #plt.title(f"Song Popularity Clusters")
 
 plt.show()
+"""
+for lang in range(2):
+    lang_name = "English" if lang == 1 else "Hebrew"
 
+    features = data.iloc[1:, [2, 8, 14]].values.astype(int)
+    features = np.array(list(filter(lambda x: x[-1] == lang, features)))
+
+    features = np.array(list(zip(*list(zip(*features))[:-1])))
+
+    rank, streams = np.array(list(zip(*features)))
+
+    plt.scatter(rank, streams, label=lang_name)
+
+plt.legend()
+plt.xlabel("Rank")
+plt.ylabel("Streams")
+
+plt.show()
