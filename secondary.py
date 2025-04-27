@@ -37,7 +37,8 @@ print(data.iloc[1:, 10].values.astype(int))
 plt.scatter(data.iloc[1:, 13].values.astype(int), data.iloc[1:, 8].values.astype(int))
 plt.plot(range(30), range(30))
 
-plt.show()"""
+plt.show()
+"""
 
 for lang in range(2):
     features = data.iloc[1:, [5, 8, 10, 11, 14]].values.astype(int)
@@ -78,13 +79,14 @@ for lang in range(2):
 
     for i in range(cluster_count):
         plt.plot(range(3), cluster_averages[i],
-                 marker='o', label=f"{lang_name} {count[i]}", linestyle=line_type)
+                 marker='o', label=f"{lang_name} {int(count[i] / sum(count) * 1000) / 10}%", linestyle=line_type)
 
 column_names = data.iloc[0, [5, 8, 10]]
 
 plt.xticks(range(3), column_names)
+plt.yticks(range(4))
 plt.legend()
-plt.title(f"Song Popularity Clusters")
+#plt.title(f"Song Popularity Clusters")
 
 plt.show()
 
